@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # manage pods with the label app: hub
+      app: hub
+  template:
+    metadata:
+      labels:
+        app: hub
+    spec:
+      containers:
+      - name: hub
+        image: andyxhadji/hub
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hub-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+  selector:
+    # apply service to any pod with label app: nginx
+    app: hub
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hub-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: hub-svc
+          servicePort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  type: NodePort
+  ports:
+    - name: traefik
+      port: 80
+      nodePort: 30182
+      targetPort: 80
+  selector:
+    app: traefik
