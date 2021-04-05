@@ -16,6 +16,13 @@ spec:
       containers:
       - name: hub
         image: andyxhadji/hub
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "1"
+          requests:
+            memory: "100Mi"
+            cpu: "0.5"
         ports:
         - containerPort: 80
 ---
