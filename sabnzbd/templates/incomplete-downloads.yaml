@@ -1,0 +1,19 @@
+---
+# Source: sabnzbd/templates/incomplete-downloads.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sabnzbd-incomplete-downloads
+  labels:
+    name: sabnzbd
+    helm.sh/chart: sabnzbd-1.0.0
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"

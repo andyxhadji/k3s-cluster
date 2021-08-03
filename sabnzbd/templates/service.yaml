@@ -1,0 +1,23 @@
+---
+# Source: sabnzbd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  labels:
+    name: sabnzbd
+    helm.sh/chart: sabnzbd-1.0.0
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
+    app.kubernetes.io/version: arm32v7-latest
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd

@@ -1,0 +1,80 @@
+---
+# Source: sabnzbd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd
+  labels:
+    name: sabnzbd
+    app: sabnzbd
+    helm.sh/chart: sabnzbd-1.0.0
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sabnzbd
+      app.kubernetes.io/instance: sabnzbd
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+        app.kubernetes.io/name: sabnzbd
+        app.kubernetes.io/instance: sabnzbd
+    spec:
+      serviceAccountName: sabnzbd
+      securityContext:
+        {}
+      containers:
+        - name: sabnzbd
+          securityContext:
+            {}
+          image: "linuxserver/sabnzbd:arm32v7-latest"
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: sabnzbd-env-config
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 60
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /downloads
+              name: downloads
+            - mountPath: /incomplete-downloads
+              name: incomplete-downloads
+          resources:
+            {}
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: sabnzbd-config
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: sabnzbd-downloads
+      - name: incomplete-downloads
+        persistentVolumeClaim:
+          claimName: sabnzbd-incomplete-downloads

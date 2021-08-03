@@ -38,6 +38,18 @@ spec:
     # apply service to any pod with label app: nginx
     app: hub
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: sabnzbd
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -54,6 +66,23 @@ spec:
           serviceName: hub-svc
           servicePort: 80
 ---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sabnzbd-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /sabnzbd
+        pathType: Prefix
+        backend:
+          serviceName: sabnzbd-svc
+          servicePort: 80
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -65,6 +94,10 @@ spec:
     - name: traefik
       port: 80
       nodePort: 30182
+      targetPort: 80
+    - name: traefik-dashboard
+      port: 80
+      nodePort: 30183
       targetPort: 80
   selector:
     app: traefik
