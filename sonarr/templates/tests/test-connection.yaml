@@ -1,0 +1,21 @@
+---
+# Source: sonarr/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "sonarr-test-connection"
+  labels:
+    helm.sh/chart: sonarr-1.0.0
+    app.kubernetes.io/name: sonarr
+    app.kubernetes.io/instance: sonarr
+    app.kubernetes.io/version: "amd64-latest"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['sonarr:8989']
+  restartPolicy: Never

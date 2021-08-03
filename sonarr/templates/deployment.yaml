@@ -1,0 +1,78 @@
+---
+# Source: sonarr/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  labels:
+    helm.sh/chart: sonarr-1.0.0
+    app.kubernetes.io/name: sonarr
+    app.kubernetes.io/instance: sonarr
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+      app.kubernetes.io/instance: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+        app.kubernetes.io/name: sonarr
+        app.kubernetes.io/instance: sonarr
+    spec:
+      serviceAccountName: sonarr
+      securityContext:
+        {}
+      containers:
+        - name: sonarr
+          securityContext:
+            {}
+          image: "linuxserver/sonarr:arm32v7-latest"
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: sonarr-env-config
+          ports:
+            - name: http
+              containerPort: 8989
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 60
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /downloads
+              name: downloads
+            - mountPath: /tv
+              name: tv
+          resources:
+            {}
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: sonarr-config
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: sonarr-downloads
+      - name: tv
+        persistentVolumeClaim:
+          claimName: sonarr-tv

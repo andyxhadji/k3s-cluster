@@ -50,6 +50,18 @@ spec:
   selector:
     app: sabnzbd
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8989
+  selector:
+    app: sonarr
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -71,7 +83,7 @@ kind: Ingress
 metadata:
   name: sabnzbd-ingress
   annotations:
-    kubernetes.io/ingress.class: traefik
+    rubernetes.io/ingress.class: traefik
     # traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
 spec:
   rules:
@@ -81,6 +93,24 @@ spec:
         pathType: Prefix
         backend:
           serviceName: sabnzbd-svc
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sonarr-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefix
+    #traefik.frontend.rule: Host:localhost;PathPrefix:/sonarr
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /sonarr
+        pathType: Prefix
+        backend:
+          serviceName: sonarr-svc
           servicePort: 80
 ---
 apiVersion: v1
