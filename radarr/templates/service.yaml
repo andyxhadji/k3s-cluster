@@ -1,0 +1,22 @@
+---
+# Source: radarr/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr
+  labels:
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
+    app.kubernetes.io/version: "amd64-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 7878
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr

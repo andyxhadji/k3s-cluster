@@ -1,14 +1,13 @@
 ---
-# Source: sabnzbd/templates/downloads-pvc.yaml
+# Source: radarr/templates/downloads-pvc.yaml
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: sabnzbd-work
+  name: radarr-downloads
   labels:
-    name: sabnzbd
-    helm.sh/chart: sabnzbd-1.0.0
-    app.kubernetes.io/name: sabnzbd
-    app.kubernetes.io/instance: sabnzbd
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
     app.kubernetes.io/version: "arm32v7-latest"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -17,4 +16,4 @@ spec:
   storageClassName: local-media-pv
   resources:
     requests:
-      storage: "1700Gi"
+      storage: "10Gi"

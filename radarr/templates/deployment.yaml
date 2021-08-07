@@ -1,13 +1,13 @@
 ---
-# Source: sonarr/templates/deployment.yaml
+# Source: radarr/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sonarr
+  name: radarr
   labels:
-    helm.sh/chart: sonarr-1.0.0
-    app.kubernetes.io/name: sonarr
-    app.kubernetes.io/instance: sonarr
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
     app.kubernetes.io/version: "arm32v7-latest"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -16,30 +16,30 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app.kubernetes.io/name: sonarr
-      app.kubernetes.io/instance: sonarr
+      app.kubernetes.io/name: radarr
+      app.kubernetes.io/instance: radarr
   template:
     metadata:
       labels:
-        app: sonarr
-        app.kubernetes.io/name: sonarr
-        app.kubernetes.io/instance: sonarr
+        app: radarr
+        app.kubernetes.io/name: radarr
+        app.kubernetes.io/instance: radarr
     spec:
-      serviceAccountName: sonarr
+      serviceAccountName: radarr
       securityContext:
         {}
       containers:
-        - name: sonarr
+        - name: radarr
           securityContext:
             {}
-          image: "linuxserver/sonarr:arm32v7-latest"
+          image: "linuxserver/radarr:arm32v7-latest"
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: sonarr-env-config
+                name: radarr-env-config
           ports:
             - name: http
-              containerPort: 8989
+              containerPort: 7878
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -62,18 +62,18 @@ spec:
               name: config
             - mountPath: completed/
               subPath: SABnzbd/completed
-              name: downloads
-            - mountPath: /tv
-              name: tv
+              name: work
+            - mountPath: /movies
+              name: movies
           resources:
             {}
       volumes:
       - name: config
         persistentVolumeClaim:
-          claimName: sonarr-config
-      - name: downloads
+          claimName: radarr-config
+      - name: work
         persistentVolumeClaim:
           claimName: sabnzbd-work
-      - name: tv
+      - name: movies
         persistentVolumeClaim:
-          claimName: sonarr-tv
+          claimName: radarr-movies

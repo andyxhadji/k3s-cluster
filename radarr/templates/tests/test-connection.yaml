@@ -1,0 +1,22 @@
+---
+# Source: radarr/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "radarr-test-connection"
+  labels:
+
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
+    app.kubernetes.io/version: "amd64-latest"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['radarr:7878']
+  restartPolicy: Never

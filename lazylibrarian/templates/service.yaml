@@ -1,0 +1,22 @@
+---
+# Source: lazylibrarian/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: lazylibrarian
+  labels:
+    helm.sh/chart: lazylibrarian-1.0.0
+    app.kubernetes.io/name: lazylibrarian
+    app.kubernetes.io/instance: lazylibrarian
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5299
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: lazylibrarian
+    app.kubernetes.io/instance: lazylibrarian

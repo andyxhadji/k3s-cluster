@@ -1,0 +1,81 @@
+---
+# Source: lazylibrarian/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lazylibrarian
+  labels:
+    helm.sh/chart: lazylibrarian-1.0.0
+    app.kubernetes.io/name: lazylibrarian
+    app.kubernetes.io/instance: lazylibrarian
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lazylibrarian
+      app.kubernetes.io/instance: lazylibrarian
+  template:
+    metadata:
+      labels:
+        app: lazylibrarian
+        app.kubernetes.io/name: lazylibrarian
+        app.kubernetes.io/instance: lazylibrarian
+    spec:
+      serviceAccountName: lazylibrarian
+      securityContext:
+        {}
+      containers:
+        - name: lazylibrarian
+          securityContext:
+            {}
+          image: "linuxserver/lazylibrarian:arm32v7-latest"
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: lazylibrarian-env-config
+          ports:
+            - name: http
+              containerPort: 5299
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 60
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            failureThreshold: 30
+            periodSeconds: 10
+          volumeMounts:
+            - mountPath: config
+              subPath: config
+              name: lazylibrarian-volume
+            - mountPath: downloads
+              subPath: downloads
+              name: lazylibrarian-volume
+            - mountPath: books
+              subPath: books
+              name: lazylibrarian-volume
+          resources:
+            {}
+      volumes:
+      - name: lazylibrarian-volume
+        persistentVolumeClaim: 
+          claimName: lazylibrarian-pvc

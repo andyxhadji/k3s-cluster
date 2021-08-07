@@ -1,0 +1,19 @@
+---
+# Source: radarr/templates/movies-pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: radarr-movies
+  labels:
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - "ReadWriteMany"
+  resources:
+    storageClassName: local-media-pv
+    requests:
+      storage: "10Gi"

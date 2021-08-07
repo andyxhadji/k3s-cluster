@@ -11,9 +11,9 @@ metadata:
   name: local-media-pv
 spec:
   capacity:
-    storage: 2000Gi
+    storage: 1800Gi
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-media-pv
   local:
@@ -27,3 +27,46 @@ spec:
           values:
           - andy-leader
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: lazylibrarian-pv
+spec:
+  capacity:
+    storage: 1800Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: lazylibrarian-pv
+  local:
+    path: /media/USBHDD1/shares/lazylibrarian
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - andy-leader
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-pv
+spec:
+  capacity:
+    storage: 1800Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: plex-pv
+  local:
+    path: /media/USBHDD1/shares/plex
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - andy-leader

@@ -1,0 +1,19 @@
+---
+# Source: lazylibrarian/templates/config-pvc.yaml
+#kind: PersistentVolumeClaim
+#apiVersion: v1
+#metadata:
+#  name: lazylibrarian-config
+#  labels:
+#    helm.sh/chart: lazylibrarian-1.0.0
+#    app.kubernetes.io/name: lazylibrarian
+#    app.kubernetes.io/instance: lazylibrarian
+#    app.kubernetes.io/version: "arm32v7-latest"
+#    app.kubernetes.io/managed-by: Helm
+#spec:
+#  accessModes:
+#    - "ReadWriteMany"
+#  storageClassName: lazylibrarian-pv
+#  resources:
+#    requests:
+#      storage: "1Gi"

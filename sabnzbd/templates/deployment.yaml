@@ -30,6 +30,26 @@ spec:
       serviceAccountName: sabnzbd
       securityContext:
         {}
+      initContainers:
+        - name: volume-mount-hack
+          image: arm32v7/busybox
+          command: ["sh", "-c", "chown -R 1001:1001 completed downloading scripts watch"]
+          volumeMounts:
+            - name: work
+              mountPath: /config
+              subPath: configs/sabnzbd
+            - name: work
+              mountPath: downloading/
+              subPath: SABnzbd/downloading
+            - name: work
+              subPath: SABnzbd/completed
+              mountPath: completed/
+            - name: work
+              subPath: SABnzbd/watch
+              mountPath: watch/
+            - name: work
+              subPath: SABnzbd/scripts
+              mountPath: scripts/
       containers:
         - name: sabnzbd
           securityContext:
@@ -60,21 +80,32 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
           volumeMounts:
-            - mountPath: /config
-              name: config
-            - mountPath: /downloads
-              name: downloads
-            - mountPath: /incomplete-downloads
-              name: incomplete-downloads
+            - name: work
+              mountPath: /config
+              subPath: configs/sabnzbd
+            - name: work
+              mountPath: downloading/
+              subPath: SABnzbd/downloading
+            - name: work
+              subPath: SABnzbd/completed
+              mountPath: completed/
+            - name: work
+              subPath: SABnzbd/watch
+              mountPath: watch/
+            - name: work
+              subPath: SABnzbd/scripts
+              mountPath: scripts/
+            #- mountPath: /incomplete-downloads
+            #  name: incomplete-downloads
           resources:
             {}
       volumes:
       - name: config
         persistentVolumeClaim:
           claimName: sabnzbd-config
-      - name: downloads
+      - name: work
         persistentVolumeClaim:
-          claimName: sabnzbd-downloads
-      - name: incomplete-downloads
-        persistentVolumeClaim:
-          claimName: sabnzbd-incomplete-downloads
+          claimName: sabnzbd-work
+      #- name: incomplete-downloads
+      #  persistentVolumeClaim:
+      #    claimName: sabnzbd-incomplete-downloads

@@ -41,6 +41,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: plex-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 32400
+  selector:
+    # apply service to any pod with label app: nginx
+    app: plex
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: sabnzbd-svc
 spec:
   ports:
@@ -49,6 +62,30 @@ spec:
       targetPort: 8080
   selector:
     app: sabnzbd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lazylibrarian-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5299
+  selector:
+    app: lazylibrarian
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 7878
+  selector:
+    app: radarr
 ---
 apiVersion: v1
 kind: Service
@@ -83,7 +120,7 @@ kind: Ingress
 metadata:
   name: sabnzbd-ingress
   annotations:
-    rubernetes.io/ingress.class: traefik
+    kubernetes.io/ingress.class: traefik
     # traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
 spec:
   rules:
@@ -111,6 +148,59 @@ spec:
         pathType: Prefix
         backend:
           serviceName: sonarr-svc
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: lazylibrarian-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /lazylibrarian
+        pathType: Prefix
+        backend:
+          serviceName: lazylibrarian-svc
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: radarr-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefix
+    #traefik.frontend.rule: Host:localhost;PathPrefix:/sonarr
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /radarr
+        pathType: Prefix
+        backend:
+          serviceName: radarr-svc
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: plex-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rule-type: PathPrefix
+    #traefik.frontend.rule: Host:localhost;PathPrefix:/sonarr
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /plex
+        pathType: Prefix
+        backend:
+          serviceName: plex-svc
           servicePort: 80
 ---
 apiVersion: v1

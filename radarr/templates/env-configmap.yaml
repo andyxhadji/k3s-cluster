@@ -1,0 +1,17 @@
+---
+# Source: radarr/templates/env-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: radarr-env-config
+  labels:
+    helm.sh/chart: radarr-1.0.0
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
+    app.kubernetes.io/version: "arm32v7-latest"
+    app.kubernetes.io/managed-by: Helm
+data:
+  PGID: "1001"
+  PUID: "1001"
+  TZ: "UTC"
+  UMASK_SET: "18"
